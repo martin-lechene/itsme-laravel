@@ -1,0 +1,26 @@
+/vendor/
+/node_modules/
+/.idea/
+/.vscode/
+/.phpunit.result.cache
+/.php_cs.cache
+composer.lock
+.DS_Store
+Thumbs.db
+
+# Laravel specific
+/storage/*.key
+/storage/logs/*
+!/storage/logs/.gitkeep
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+
+# Testing
+/coverage/
+.phpunit.cache
+
+# IDE
+*.swp
+*.swo
+*~
+
