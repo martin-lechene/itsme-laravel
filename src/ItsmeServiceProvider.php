@@ -61,6 +61,13 @@ class ItsmeServiceProvider extends ServiceProvider
 
         // Charger les vues
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'itsme');
+
+        // Enregistrer les commandes Artisan
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \ItsmeLaravel\Itsme\Console\Commands\TestItsmeConfig::class,
+            ]);
+        }
     }
 
     /**

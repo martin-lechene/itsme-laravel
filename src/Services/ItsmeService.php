@@ -20,6 +20,12 @@ class ItsmeService
 
     /**
      * Get the authorization URL for redirecting to Itsme.
+     *
+     * This method generates a secure authorization URL with state, nonce, and PKCE parameters.
+     * The state and nonce are stored in the session for validation during the callback.
+     *
+     * @return string The authorization URL to redirect the user to
+     * @throws \ItsmeLaravel\Itsme\Exceptions\ItsmeException If discovery fails
      */
     public function getAuthorizationUrl(): string
     {
@@ -57,8 +63,18 @@ class ItsmeService
 
     /**
      * Handle the callback from Itsme.
+     *
+     * This method processes the authorization callback, validates the state parameter,
+     * exchanges the authorization code for tokens, validates the ID token, and retrieves
+     * user information from the UserInfo endpoint.
+     *
+     * @param Request $request The HTTP request containing the callback parameters
+     * @return array User information from Itsme (sub, email, name, etc.)
+     * @throws InvalidStateException If the state parameter is invalid
+     * @throws AuthenticationFailedException If authentication fails
+     * @throws InvalidTokenException If token validation fails
      */
-    public function handleCallback(Request $request)
+    public function handleCallback(Request $request): array
     {
         // Check for errors
         if ($error = $request->get('error')) {

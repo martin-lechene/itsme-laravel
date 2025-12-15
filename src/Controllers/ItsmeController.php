@@ -4,7 +4,11 @@ namespace ItsmeLaravel\Itsme\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
+use ItsmeLaravel\Itsme\Events\ItsmeAuthenticationFailed;
+use ItsmeLaravel\Itsme\Events\ItsmeUserAuthenticated;
+use ItsmeLaravel\Itsme\Events\ItsmeUserCreated;
 use ItsmeLaravel\Itsme\Exceptions\AuthenticationFailedException;
 use ItsmeLaravel\Itsme\Exceptions\InvalidStateException;
 use ItsmeLaravel\Itsme\Exceptions\InvalidTokenException;
@@ -45,7 +49,14 @@ class ItsmeController
             $userInfo = $this->itsmeService->handleCallback($request);
 
             // Create or update user
+            $isNewUser = !$this->userExists($userInfo);
             $user = $this->createOrUpdateUser($userInfo);
+
+            // Emit events
+            if ($isNewUser) {
+                Event::dispatch(new ItsmeUserCreated($user, $userInfo));
+            }
+            Event::dispatch(new ItsmeUserAuthenticated($user, $userInfo));
 
             // Log in the user
             Auth::login($user, true);
@@ -65,6 +76,11 @@ class ItsmeController
             Log::error('Itsme authentication failed', [
                 'error' => $e->getMessage(),
             ]);
+
+            Event::dispatch(new ItsmeAuthenticationFailed(
+                $e->getMessage(),
+                $request->get('error_description')
+            ));
 
             return redirect()->route('login')
                 ->with('error', $e->getMessage());
@@ -89,7 +105,22 @@ class ItsmeController
     }
 
     /**
+     * Check if user exists.
+     */
+    protected function userExists(array $userInfo): bool
+    {
+        $userModel = config('auth.providers.users.model', \App\Models\User::class);
+        
+        return $userModel::where('itsme_id', $userInfo['sub'])
+            ->orWhere('email', $userInfo['email'] ?? null)
+            ->exists();
+    }
+
+    /**
      * Create or update a user from Itsme user info.
+     *
+     * @param array $userInfo User information from Itsme
+     * @return \Illuminate\Contracts\Auth\Authenticatable
      */
     protected function createOrUpdateUser(array $userInfo)
     {
