@@ -5,55 +5,62 @@
 [![PHP](https://img.shields.io/badge/PHP-8.2+-blue.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Package Laravel pour l'authentification via **Itsme** en utilisant OpenID Connect 1.0.
+Laravel package for authentication via **Itsme** using OpenID Connect 1.0.
 
 ## 📋 Description
 
-Ce package permet d'intégrer facilement l'authentification Itsme dans votre application Laravel 12. Itsme est une solution d'identité numérique belge qui permet aux utilisateurs de s'authentifier de manière sécurisée sans mot de passe.
+This package allows you to easily integrate Itsme authentication into your Laravel 12 application. Itsme is a Belgian digital identity solution that allows users to authenticate securely without a password.
 
-## ✨ Fonctionnalités
+## ✨ Features
 
-- ✅ Authentification via OpenID Connect 1.0
-- ✅ Support PKCE pour une sécurité renforcée
-- ✅ Validation complète des tokens JWT
-- ✅ Création automatique de compte utilisateur
-- ✅ Découverte automatique de la configuration OpenID
-- ✅ Bouton Itsme prêt à l'emploi
-- ✅ Gestion complète des erreurs
-- ✅ Compatible Laravel 12
+- ✅ Authentication via OpenID Connect 1.0
+- ✅ PKCE support for enhanced security
+- ✅ Complete JWT token validation
+- ✅ Automatic user account creation
+- ✅ Automatic OpenID configuration discovery
+- ✅ Ready-to-use Itsme button
+- ✅ Complete error handling
+- ✅ Laravel 12 compatible
+- ✅ Multi-language support (EN/FR)
 
 ## 📦 Installation
 
-### 1. Installation via Composer
+### 1. Install via Composer
 
 ```bash
 composer require martin-lechene/itsme-laravel
 ```
 
-### 2. Publier la configuration
+### 2. Publish the configuration
 
 ```bash
 php artisan vendor:publish --tag=itsme-config
 ```
 
-### 3. Publier les migrations
+### 3. Publish the migrations
 
 ```bash
 php artisan vendor:publish --tag=itsme-migrations
 php artisan migrate
 ```
 
-### 4. Publier les vues (optionnel)
+### 4. Publish the views (optional)
 
 ```bash
 php artisan vendor:publish --tag=itsme-views
 ```
 
+### 5. Publish the language files (optional)
+
+```bash
+php artisan vendor:publish --tag=itsme-lang
+```
+
 ## ⚙️ Configuration
 
-### Variables d'environnement
+### Environment Variables
 
-Ajoutez ces variables dans votre fichier `.env` :
+Add these variables to your `.env` file:
 
 ```env
 ITSME_CLIENT_ID=your_client_id
@@ -64,53 +71,53 @@ ITSME_USE_PKCE=true
 ITSME_VERIFY_TOKEN=true
 ```
 
-### Configuration du portail Itsme
+### Itsme Portal Configuration
 
-1. Créez un compte sur le [portail développeur Itsme](https://www.itsme-id.com/en-BE/business/developer)
-2. Enregistrez votre application
-3. Configurez les redirect URIs autorisés
-4. Obtenez votre Client ID et Client Secret
-5. Testez en environnement sandbox
+1. Create an account on the [Itsme developer portal](https://www.itsme-id.com/en-BE/business/developer)
+2. Register your application
+3. Configure authorized redirect URIs
+4. Get your Client ID and Client Secret
+5. Test in sandbox environment
 
-## 🚀 Utilisation
+## 🚀 Usage
 
-### Ajouter le bouton Itsme dans vos vues
+### Add the Itsme button to your views
 
-Dans votre vue de connexion (`resources/views/auth/login.blade.php`) :
+In your login view (`resources/views/auth/login.blade.php`):
 
 ```blade
 <div class="itsme-auth-section">
-    <h3>Ou connectez-vous avec</h3>
+    <h3>Or sign in with</h3>
     
     @include('itsme::itsme-button', [
-        'text' => 'Se connecter avec itsme®',
+        'text' => __('itsme::itsme.button_text'),
         'size' => 'default'
     ])
 </div>
 ```
 
-### Utilisation programmatique
+### Programmatic usage
 
 ```php
 use ItsmeLaravel\Itsme\Facades\Itsme;
 
-// Obtenir l'URL d'autorisation
+// Get the authorization URL
 $url = Itsme::getAuthorizationUrl();
 return redirect($url);
 ```
 
-### Routes disponibles
+### Available routes
 
-Le package enregistre automatiquement ces routes :
+The package automatically registers these routes:
 
-- `GET /itsme/redirect` - Redirige vers la page d'authentification Itsme
-- `GET /itsme/callback` - Gère le callback après authentification
+- `GET /itsme/redirect` - Redirects to the Itsme authentication page
+- `GET /itsme/callback` - Handles the callback after authentication
 
-## 📝 Mapping des données utilisateur
+## 📝 User Data Mapping
 
-Le package mappe automatiquement les données Itsme vers votre modèle User :
+The package automatically maps Itsme data to your User model:
 
-| Claim Itsme | Champ Laravel |
+| Itsme Claim | Laravel Field |
 |-------------|---------------|
 | `sub` | `itsme_id` |
 | `email` | `email` |
@@ -119,41 +126,58 @@ Le package mappe automatiquement les données Itsme vers votre modèle User :
 | `name` | `name` |
 | `phone_number` | `phone` |
 
-## 🎨 Personnalisation
+## 🌐 Localization
 
-### Personnaliser le bouton
+The package supports multiple languages (English by default, French available). All user-facing strings are translatable.
+
+To customize translations, publish the language files:
+
+```bash
+php artisan vendor:publish --tag=itsme-lang
+```
+
+Then edit the files in `lang/vendor/itsme/en/itsme.php` or `lang/vendor/itsme/fr/itsme.php`.
+
+The package will automatically use your application's locale (set in `config/app.php`).
+
+## 🎨 Customization
+
+### Customize the button
 
 ```blade
 @include('itsme::itsme-button', [
-    'text' => 'S\'inscrire avec itsme®',
+    'text' => 'Sign up with itsme®',
     'size' => 'large', // 'small', 'default', 'large'
     'class' => 'custom-class'
 ])
 ```
 
-### Personnaliser la création d'utilisateur
+### Customize user creation
 
-Vous pouvez écouter les événements Laravel pour personnaliser la création d'utilisateur :
+You can listen to Laravel events to customize user creation:
 
 ```php
 use Illuminate\Support\Facades\Event;
+use ItsmeLaravel\Itsme\Events\ItsmeUserCreated;
 
-Event::listen('itsme.user.created', function ($user, $userInfo) {
-    // Personnaliser la création d'utilisateur
+Event::listen(ItsmeUserCreated::class, function ($event) {
+    // Customize user creation
+    $user = $event->user;
+    $userInfo = $event->userInfo;
 });
 ```
 
-## 🔒 Sécurité
+## 🔒 Security
 
-Le package implémente plusieurs mesures de sécurité :
+The package implements several security measures:
 
-- ✅ **State parameter** : Protection contre les attaques CSRF
-- ✅ **Nonce** : Protection contre les replay attacks
-- ✅ **PKCE** : Protection contre l'interception du code d'autorisation
-- ✅ **Validation des tokens** : Vérification de la signature, expiration, audience, issuer
-- ✅ **Validation des redirect URIs** : Vérification que l'URI correspond à la configuration
+- ✅ **State parameter**: Protection against CSRF attacks
+- ✅ **Nonce**: Protection against replay attacks
+- ✅ **PKCE**: Protection against authorization code interception
+- ✅ **Token validation**: Verification of signature, expiration, audience, issuer
+- ✅ **Redirect URI validation**: Verification that the URI matches the configuration
 
-## 🧪 Tests
+## 🧪 Testing
 
 ```bash
 composer test
@@ -161,32 +185,34 @@ composer test
 
 ## 📚 Documentation
 
-Pour plus d'informations, consultez :
+For more information, see:
 
-- [Plan du package](PLAN_PACKAGE_ITSME.md)
-- [Détails techniques](DETAILS_TECHNIQUES.md)
-- [Flux d'authentification](FLUX_AUTHENTIFICATION.md)
-- [Documentation officielle Itsme](https://www.itsme-id.com/en-BE/business/developer)
+- [Package Plan](PLAN_PACKAGE_ITSME.md)
+- [Technical Details](DETAILS_TECHNIQUES.md)
+- [Authentication Flow](FLUX_AUTHENTIFICATION.md)
+- [Usage Examples](USAGE_EXAMPLES.md)
+- [Official Itsme Documentation](https://www.itsme-id.com/en-BE/business/developer)
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request.
+Contributions are welcome! Feel free to open an issue or a pull request.
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
 ## 📄 License
 
-Ce package est sous licence [MIT](LICENSE).
+This package is licensed under the [MIT License](LICENSE).
 
-## 🙏 Remerciements
+## 🙏 Acknowledgments
 
-- [Itsme](https://www.itsme-id.com/) pour leur service d'identité numérique
-- [Laravel](https://laravel.com/) pour le framework
-- [Laravel Socialite](https://laravel.com/docs/socialite) pour l'inspiration
+- [Itsme](https://www.itsme-id.com/) for their digital identity service
+- [Laravel](https://laravel.com/) for the framework
+- [Laravel Socialite](https://laravel.com/docs/socialite) for inspiration
 
 ## 📞 Support
 
-Pour toute question ou problème, ouvrez une [issue](https://github.com/martin-lechene/itsme-laravel/issues).
+For any questions or issues, please open an [issue](https://github.com/martin-lechene/itsme-laravel/issues).
 
 ---
 
-**Note** : Ce package n'est pas officiellement supporté par Itsme. Il s'agit d'une implémentation communautaire basée sur la documentation publique d'Itsme.
-
+**Note**: This package is not officially supported by Itsme. It is a community implementation based on Itsme's public documentation.
