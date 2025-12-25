@@ -51,6 +51,11 @@ class ItsmeServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/views' => resource_path('views/vendor/itsme'),
         ], 'itsme-views');
 
+        // Publier les fichiers de langue
+        $this->publishes([
+            __DIR__ . '/../resources/lang' => lang_path('vendor/itsme'),
+        ], 'itsme-lang');
+
         // Publier les assets
         $this->publishes([
             __DIR__ . '/../resources/assets' => public_path('vendor/itsme'),
@@ -61,6 +66,9 @@ class ItsmeServiceProvider extends ServiceProvider
 
         // Charger les vues
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'itsme');
+
+        // Charger les fichiers de langue
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'itsme');
 
         // Enregistrer les commandes Artisan
         if ($this->app->runningInConsole()) {

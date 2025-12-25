@@ -87,13 +87,13 @@ class ItsmeService
         $sessionState = session()->get('itsme.state');
 
         if (!$state || $state !== $sessionState) {
-            throw new InvalidStateException('Invalid state parameter');
+            throw new InvalidStateException(__('itsme::itsme.errors.invalid_state'));
         }
 
         // Get authorization code
         $code = $request->get('code');
         if (!$code) {
-            throw new AuthenticationFailedException('Authorization code missing');
+            throw new AuthenticationFailedException(__('itsme::itsme.errors.authorization_code_missing'));
         }
 
         // Exchange code for token
@@ -139,7 +139,7 @@ class ItsmeService
 
         if (!$response->successful()) {
             $error = $response->json('error', 'unknown_error');
-            $errorDescription = $response->json('error_description', 'Token exchange failed');
+            $errorDescription = $response->json('error_description', __('itsme::itsme.errors.token_exchange_failed'));
             
             Log::error('Itsme token exchange failed', [
                 'error' => $error,
@@ -147,13 +147,13 @@ class ItsmeService
                 'status' => $response->status(),
             ]);
 
-            throw new AuthenticationFailedException("Token exchange failed: {$errorDescription}");
+            throw new AuthenticationFailedException(__('itsme::itsme.errors.token_exchange_failed') . ': ' . $errorDescription);
         }
 
         $tokens = $response->json();
 
         if (!isset($tokens['access_token']) || !isset($tokens['id_token'])) {
-            throw new AuthenticationFailedException('Invalid token response');
+            throw new AuthenticationFailedException(__('itsme::itsme.errors.invalid_token_response'));
         }
 
         return $tokens;
@@ -177,7 +177,7 @@ class ItsmeService
                 'body' => $response->body(),
             ]);
 
-            throw new AuthenticationFailedException('Failed to retrieve user information');
+            throw new AuthenticationFailedException(__('itsme::itsme.errors.user_info_failed'));
         }
 
         return $response->json();
@@ -189,18 +189,18 @@ class ItsmeService
     protected function handleError(string $error, ?string $errorDescription = null): void
     {
         $errorMessages = [
-            'access_denied' => 'L\'utilisateur a refusé l\'autorisation',
-            'invalid_request' => 'La requête est invalide',
-            'invalid_client' => 'Client ID ou secret invalide',
-            'invalid_grant' => 'Le code d\'autorisation est invalide ou expiré',
-            'unauthorized_client' => 'Le client n\'est pas autorisé',
-            'unsupported_response_type' => 'Type de réponse non supporté',
-            'invalid_scope' => 'Scope invalide',
-            'server_error' => 'Erreur serveur Itsme',
-            'temporarily_unavailable' => 'Service temporairement indisponible',
+            'access_denied' => __('itsme::itsme.errors.access_denied'),
+            'invalid_request' => __('itsme::itsme.errors.invalid_request'),
+            'invalid_client' => __('itsme::itsme.errors.invalid_client'),
+            'invalid_grant' => __('itsme::itsme.errors.invalid_grant'),
+            'unauthorized_client' => __('itsme::itsme.errors.unauthorized_client'),
+            'unsupported_response_type' => __('itsme::itsme.errors.unsupported_response_type'),
+            'invalid_scope' => __('itsme::itsme.errors.invalid_scope'),
+            'server_error' => __('itsme::itsme.errors.server_error'),
+            'temporarily_unavailable' => __('itsme::itsme.errors.temporarily_unavailable'),
         ];
 
-        $message = $errorMessages[$error] ?? 'Une erreur est survenue lors de l\'authentification';
+        $message = $errorMessages[$error] ?? __('itsme::itsme.errors.unknown_error');
 
         if ($errorDescription) {
             $message .= ': ' . $errorDescription;

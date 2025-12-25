@@ -1,5 +1,5 @@
 @props([
-    'text' => 'Se connecter avec itsme®',
+    'text' => __('itsme::itsme.button_text'),
     'class' => '',
     'size' => 'default', // 'default', 'small', 'large'
 ])

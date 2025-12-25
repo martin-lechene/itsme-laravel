@@ -1,6 +1,6 @@
 @props([
-    'message' => 'Une erreur est survenue lors de l\'authentification Itsme.',
-    'title' => 'Erreur d\'authentification',
+    'message' => __('itsme::itsme.errors.authentication_failed'),
+    'title' => __('itsme::itsme.errors.title'),
 ])
 
 <div class="itsme-error-container">
@@ -14,7 +14,7 @@
         <p class="itsme-error-message">{{ $message }}</p>
         <div class="itsme-error-actions">
             <a href="{{ route('login') }}" class="itsme-error-button">
-                Retour à la connexion
+                {{ __('itsme::itsme.errors.back_to_login') }}
             </a>
         </div>
     </div>

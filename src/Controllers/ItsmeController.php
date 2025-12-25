@@ -36,7 +36,7 @@ class ItsmeController
             ]);
 
             return redirect()->route('login')
-                ->with('error', 'Une erreur est survenue lors de la redirection vers Itsme.');
+                ->with('error', __('itsme::itsme.errors.redirect_failed'));
         }
     }
 
@@ -70,7 +70,7 @@ class ItsmeController
             ]);
 
             return redirect()->route('login')
-                ->with('error', 'Session expirée. Veuillez réessayer.');
+                ->with('error', __('itsme::itsme.errors.session_expired'));
 
         } catch (AuthenticationFailedException $e) {
             Log::error('Itsme authentication failed', [
@@ -91,7 +91,7 @@ class ItsmeController
             ]);
 
             return redirect()->route('login')
-                ->with('error', 'Erreur de sécurité. Veuillez réessayer.');
+                ->with('error', __('itsme::itsme.errors.security_error'));
 
         } catch (\Exception $e) {
             Log::error('Itsme callback error', [
@@ -100,7 +100,7 @@ class ItsmeController
             ]);
 
             return redirect()->route('login')
-                ->with('error', 'Une erreur inattendue est survenue.');
+                ->with('error', __('itsme::itsme.errors.unexpected_error'));
         }
     }
 
