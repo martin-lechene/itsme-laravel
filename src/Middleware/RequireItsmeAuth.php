@@ -30,9 +30,9 @@ class RequireItsmeAuth
         // Check if user has itsme_id (authenticated via Itsme)
         if (empty($user->itsme_id)) {
             Auth::logout();
-            
+
             return redirect()->route('login')
-                ->with('error', 'Cette page nécessite une authentification via Itsme.');
+                ->with('error', __('itsme::itsme.errors.itsme_auth_required'));
         }
 
         return $next($request);

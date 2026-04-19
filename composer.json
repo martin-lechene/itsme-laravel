@@ -7,13 +7,15 @@
         "itsme",
         "authentication",
         "openid-connect",
+        "oauth2",
         "belgium",
-        "eid"
+        "eid",
+        "identity"
     ],
     "license": "MIT",
     "authors": [
         {
-            "name": "Martin Lech\u00eane",
+            "name": "Martin Lechêane",
             "email": "martin.lechene@example.com"
         }
     ],
@@ -23,22 +25,23 @@
         "source": "https://github.com/martin-lechene/itsme-laravel"
     },
     "scripts": {
-        "test": "phpunit",
-        "test-coverage": "phpunit --coverage-html coverage",
-        "analyse": "phpstan analyse",
-        "format": "php-cs-fixer fix"
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "analyse": "vendor/bin/phpstan analyse",
+        "format": "vendor/bin/php-cs-fixer fix"
     },
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^12.0",
-        "laravel/socialite": "^5.0",
+        "laravel/framework": "^12.0|^13.0",
         "guzzlehttp/guzzle": "^7.0",
         "firebase/php-jwt": "^6.10"
     },
     "require-dev": {
-        "orchestra/testbench": "^10.0",
+        "orchestra/testbench": "^10.0|^11.0",
         "phpunit/phpunit": "^12.5.22",
-        "mockery/mockery": "^1.6"
+        "mockery/mockery": "^1.6",
+        "phpstan/phpstan": "^1.10",
+        "friendsofphp/php-cs-fixer": "^3.0"
     },
     "autoload": {
         "psr-4": {
@@ -60,6 +63,6 @@
             }
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

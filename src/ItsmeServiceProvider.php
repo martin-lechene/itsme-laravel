@@ -2,11 +2,13 @@
 
 namespace ItsmeLaravel\Itsme;
 
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Route;
+use ItsmeLaravel\Itsme\Middleware\RequireItsmeAuth;
 use ItsmeLaravel\Itsme\Services\ItsmeService;
-use ItsmeLaravel\Itsme\Services\TokenValidator;
 use ItsmeLaravel\Itsme\Services\OpenIdDiscovery;
+use ItsmeLaravel\Itsme\Services\TokenValidator;
 
 class ItsmeServiceProvider extends ServiceProvider
 {
@@ -36,41 +38,39 @@ class ItsmeServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Publier la configuration
+        // Publish configuration
         $this->publishes([
             __DIR__ . '/../config/itsme.php' => config_path('itsme.php'),
         ], 'itsme-config');
 
-        // Publier les migrations
+        // Publish migrations
         $this->publishes([
             __DIR__ . '/../database/migrations' => database_path('migrations'),
         ], 'itsme-migrations');
 
-        // Publier les vues
+        // Publish views
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/itsme'),
         ], 'itsme-views');
 
-        // Publier les fichiers de langue
+        // Publish language files
         $this->publishes([
             __DIR__ . '/../resources/lang' => lang_path('vendor/itsme'),
         ], 'itsme-lang');
 
-        // Publier les assets
-        $this->publishes([
-            __DIR__ . '/../resources/assets' => public_path('vendor/itsme'),
-        ], 'itsme-assets');
-
-        // Charger les routes
+        // Load routes
         $this->loadRoutes();
 
-        // Charger les vues
+        // Load views
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'itsme');
 
-        // Charger les fichiers de langue
+        // Load language files
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'itsme');
 
-        // Enregistrer les commandes Artisan
+        // Register middleware alias
+        $this->registerMiddleware();
+
+        // Register Artisan commands
         if ($this->app->runningInConsole()) {
             $this->commands([
                 \ItsmeLaravel\Itsme\Console\Commands\TestItsmeConfig::class,
@@ -83,12 +83,23 @@ class ItsmeServiceProvider extends ServiceProvider
      */
     protected function loadRoutes(): void
     {
-        Route::group([
+        $router = $this->app->make(\Illuminate\Routing\Router::class);
+
+        $router->group([
             'prefix' => 'itsme',
             'middleware' => 'web',
         ], function () {
             $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
         });
+    }
+
+    /**
+     * Register the package middleware alias.
+     */
+    protected function registerMiddleware(): void
+    {
+        $router = $this->app->make(\Illuminate\Routing\Router::class);
+        $router->aliasMiddleware('itsme.auth', RequireItsmeAuth::class);
     }
 }
 

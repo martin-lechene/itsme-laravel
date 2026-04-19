@@ -24,10 +24,11 @@ class ItsmeController
     /**
      * Redirect the user to the Itsme authorization page.
      */
-    public function redirect()
+    public function redirect(): \Illuminate\Http\RedirectResponse
     {
         try {
             $url = $this->itsmeService->getAuthorizationUrl();
+
             return redirect($url);
         } catch (\Exception $e) {
             Log::error('Itsme redirect failed', [
@@ -43,7 +44,7 @@ class ItsmeController
     /**
      * Handle the callback from Itsme.
      */
-    public function callback(Request $request)
+    public function callback(Request $request): \Illuminate\Http\RedirectResponse
     {
         try {
             $userInfo = $this->itsmeService->handleCallback($request);
