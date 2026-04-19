@@ -3,16 +3,13 @@
 namespace ItsmeLaravel\Itsme\Tests\Unit;
 
 use ItsmeLaravel\Itsme\Exceptions\InvalidTokenException;
-use ItsmeLaravel\Itsme\Services\OpenIdDiscovery;
 use ItsmeLaravel\Itsme\Services\TokenValidator;
 use ItsmeLaravel\Itsme\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Http;
 
 class TokenValidatorTest extends TestCase
 {
     protected TokenValidator $validator;
-    protected OpenIdDiscovery $discovery;
 
     protected function setUp(): void
     {
@@ -22,7 +19,6 @@ class TokenValidatorTest extends TestCase
         Config::set('itsme.verify_token_signature', false); // Disable for unit tests
         Config::set('itsme.issuer', 'https://idp.itsme.be'); // Match the issuer used in test tokens
 
-        $this->discovery = $this->createMock(OpenIdDiscovery::class);
         $this->validator = new TokenValidator();
     }
 
