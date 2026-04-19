@@ -32,5 +32,6 @@ return [
         'user_info_failed' => 'Failed to retrieve user information',
         'invalid_state' => 'Invalid state parameter',
         'authorization_code_missing' => 'Authorization code missing',
+        'itsme_auth_required' => 'This page requires authentication via Itsme.',
     ],
 ];

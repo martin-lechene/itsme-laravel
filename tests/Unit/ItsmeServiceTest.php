@@ -12,7 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 class ItsmeServiceTest extends TestCase
 {
     protected ItsmeService $service;
@@ -161,7 +163,7 @@ class ItsmeServiceTest extends TestCase
         ]);
 
         $this->expectException(AuthenticationFailedException::class);
-        $this->expectExceptionMessage('L\'utilisateur a refusé l\'autorisation');
+        $this->expectExceptionMessage('User denied authorization');
 
         $this->service->handleCallback($request);
     }
