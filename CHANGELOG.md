@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ItsmeServiceTest`: added `#[AllowMockObjectsWithoutExpectations]` attribute; fixed expected exception message from French to English
 
 ### Security
-- `firebase/php-jwt` upgraded from `^6.0` to `^6.10` (resolves `6.x-dev` pre-6.0.0 vulnerability)
+- `firebase/php-jwt` upgraded from `^6.0` → `^6.10` → **`^7.0`** (v7.0.5): all 6.x versions blocked by Packagist advisory `PKSA-y2cr-5h3j-g3ys`; v7 is clean and has the same `Key`/`JWT` API surface
 - `phpunit/phpunit` upgraded from `^11.0` to `^12.5.22` (patches argument injection via newline CVE)
 
 ## [1.0.0] - 2024-01-01

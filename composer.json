@@ -34,7 +34,7 @@
         "php": "^8.2",
         "laravel/framework": "^12.0|^13.0",
         "guzzlehttp/guzzle": "^7.0",
-        "firebase/php-jwt": "^6.10"
+        "firebase/php-jwt": "^7.0"
     },
     "require-dev": {
         "orchestra/testbench": "^10.0|^11.0",
