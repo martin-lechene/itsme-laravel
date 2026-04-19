@@ -20,6 +20,7 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="APP_KEY" value="base64:dGVzdC10ZXN0LXRlc3QtdGVzdC10ZXN0LXRlc3QteHg="/>
         <env name="ITSME_CLIENT_ID" value="test_client_id"/>
         <env name="ITSME_CLIENT_SECRET" value="test_client_secret"/>
         <env name="ITSME_ENVIRONMENT" value="sandbox"/>

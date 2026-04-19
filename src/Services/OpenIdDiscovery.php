@@ -44,7 +44,7 @@ class OpenIdDiscovery
 
             $config = $response->json();
 
-            if (empty($config)) {
+            if ($config === null) {
                 throw new ItsmeException('Empty OpenID configuration received');
             }
 

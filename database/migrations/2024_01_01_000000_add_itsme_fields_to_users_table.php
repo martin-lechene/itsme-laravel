@@ -23,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex(['itsme_id']);
+            $table->dropUnique('users_itsme_id_unique');
+            $table->dropIndex('users_itsme_id_index');
             $table->dropColumn('itsme_id');
         });
     }

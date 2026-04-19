@@ -161,7 +161,7 @@ class ItsmeServiceTest extends TestCase
         ]);
 
         $this->expectException(AuthenticationFailedException::class);
-        $this->expectExceptionMessage('L\'utilisateur a refusé l\'autorisation');
+        $this->expectExceptionMessage('User denied authorization');
 
         $this->service->handleCallback($request);
     }

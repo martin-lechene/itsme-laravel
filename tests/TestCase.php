@@ -2,8 +2,10 @@
 
 namespace ItsmeLaravel\Itsme\Tests;
 
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Illuminate\Support\Facades\Route;
 use ItsmeLaravel\Itsme\ItsmeServiceProvider;
+use ItsmeLaravel\Itsme\Tests\Models\User;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
@@ -14,7 +16,9 @@ abstract class TestCase extends OrchestraTestCase
     {
         parent::setUp();
 
-        // Load migrations
+        // Load test-specific migrations first (creates the users table),
+        // then the package migration (adds itsme_id column to users).
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
@@ -29,6 +33,15 @@ abstract class TestCase extends OrchestraTestCase
     }
 
     /**
+     * Define routes for the test application.
+     */
+    protected function defineRoutes($router): void
+    {
+        // Provide a minimal login route so controller error redirects don't throw.
+        $router->get('/login', fn () => 'login')->name('login');
+    }
+
+    /**
      * Define environment setup.
      */
     protected function defineEnvironment($app): void
@@ -40,6 +53,9 @@ abstract class TestCase extends OrchestraTestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
+
+        // Use the test User model so the controller can create/update users.
+        $app['config']->set('auth.providers.users.model', User::class);
 
         // Setup Itsme config
         $app['config']->set('itsme.client_id', 'test_client_id');

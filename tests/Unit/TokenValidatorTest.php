@@ -20,6 +20,7 @@ class TokenValidatorTest extends TestCase
 
         Config::set('itsme.client_id', 'test_client_id');
         Config::set('itsme.verify_token_signature', false); // Disable for unit tests
+        Config::set('itsme.issuer', 'https://idp.itsme.be'); // Match the issuer used in test tokens
 
         $this->discovery = $this->createMock(OpenIdDiscovery::class);
         $this->validator = new TokenValidator();
