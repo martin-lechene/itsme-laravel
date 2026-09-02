@@ -59,11 +59,14 @@ class ItsmeController
             }
             Event::dispatch(new ItsmeUserAuthenticated($user, $userInfo));
 
+            // Prevent session fixation before authenticating
+            session()->regenerate();
+
             // Log in the user
             Auth::login($user, true);
 
-            // Redirect to intended page or home
-            return redirect()->intended('/');
+            // Redirect to intended page or home (sanitized against open redirects)
+            return redirect($this->safeIntendedUrl());
 
         } catch (InvalidStateException $e) {
             Log::warning('Itsme invalid state', [
@@ -110,11 +113,42 @@ class ItsmeController
      */
     protected function userExists(array $userInfo): bool
     {
+        return $this->findUser($userInfo) !== null;
+    }
+
+    /**
+     * Resolve an existing user for the itsme subject.
+     *
+     * Strictly links by itsme_id. When link_by_email is enabled, an account
+     * may be matched by verified email only if both the itsme email claim and
+     * the existing account's email_verified_at are verified.
+     *
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    protected function findUser(array $userInfo)
+    {
         $userModel = config('auth.providers.users.model', \App\Models\User::class);
-        
-        return $userModel::where('itsme_id', $userInfo['sub'])
-            ->orWhere('email', $userInfo['email'] ?? null)
-            ->exists();
+        $sub = $userInfo['sub'] ?? null;
+
+        if ($sub !== null && $sub !== '') {
+            $user = $userModel::where('itsme_id', $sub)->first();
+            if ($user) {
+                return $user;
+            }
+        }
+
+        if (config('itsme.link_by_email', false)) {
+            $email = $userInfo['email'] ?? null;
+            $emailVerified = ! empty($userInfo['email_verified']);
+
+            if ($emailVerified && is_string($email) && $email !== '') {
+                return $userModel::where('email', $email)
+                    ->whereNotNull('email_verified_at')
+                    ->first();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -128,13 +162,10 @@ class ItsmeController
         // Get the User model class
         $userModel = config('auth.providers.users.model', \App\Models\User::class);
 
-        // Find user by itsme_id or email
-        $user = $userModel::where('itsme_id', $userInfo['sub'])
-            ->orWhere('email', $userInfo['email'] ?? null)
-            ->first();
+        $user = $this->findUser($userInfo);
 
         $userData = [
-            'itsme_id' => $userInfo['sub'],
+            'itsme_id' => $userInfo['sub'] ?? null,
             'email' => $userInfo['email'] ?? null,
             'email_verified_at' => isset($userInfo['email_verified']) && $userInfo['email_verified']
                 ? now()
@@ -160,7 +191,12 @@ class ItsmeController
             $userData['phone'] = $userInfo['phone_number'];
         }
 
-        if ($user) {
+        // Only write columns the consuming model actually accepts
+        $userData = $this->filterFillable($userModel, $userData);
+
+        $user = $user ?? new $userModel();
+
+        if ($user->exists) {
             // Update existing user
             $user->update($userData);
         } else {
@@ -169,6 +205,53 @@ class ItsmeController
         }
 
         return $user;
+    }
+
+    /**
+     * Restrict the data written to the model's fillable columns.
+     *
+     * @param class-string $userModel
+     */
+    protected function filterFillable(string $userModel, array $data): array
+    {
+        $model = new $userModel();
+        $fillable = $model->getFillable();
+        $guarded = $model->getGuarded();
+
+        // Fully mass-assignable models (guarded = [] or fillable = ['*']) pass through
+        if ($fillable === ['*'] || $guarded === []) {
+            return $data;
+        }
+
+        // Protected model with no explicit fillable: nothing is assignable
+        if ($fillable === []) {
+            return [];
+        }
+
+        return array_intersect_key($data, array_flip($fillable));
+    }
+
+    /**
+     * Resolve the post-login redirect, refusing cross-origin URLs.
+     */
+    protected function safeIntendedUrl(): string
+    {
+        $intended = session()->pull('url.intended', '/');
+
+        if (! is_string($intended) || $intended === '') {
+            return '/';
+        }
+
+        $host = parse_url($intended, PHP_URL_HOST);
+
+        // Relative path (or bare "/") is safe; anything with a host must be ours
+        if ($host === null || $host === false) {
+            return $intended;
+        }
+
+        $expectedHost = parse_url(config('app.url'), PHP_URL_HOST);
+
+        return $host === $expectedHost ? $intended : '/';
     }
 }
 

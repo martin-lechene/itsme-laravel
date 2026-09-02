@@ -5,6 +5,7 @@ namespace ItsmeLaravel\Itsme\Tests\Feature;
 use ItsmeLaravel\Itsme\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 class AuthenticationTest extends TestCase
@@ -16,6 +17,8 @@ class AuthenticationTest extends TestCase
         Config::set('itsme.client_id', 'test_client_id');
         Config::set('itsme.client_secret', 'test_client_secret');
         Config::set('itsme.redirect', 'http://localhost/itsme/callback');
+
+        Route::get('/login', fn () => 'login')->name('login');
     }
 
     public function test_redirect_route_generates_authorization_url(): void
@@ -64,18 +67,22 @@ class AuthenticationTest extends TestCase
 
         Config::set('itsme.verify_token_signature', false);
         Config::set('itsme.issuer', 'https://idp.itsme.be');
-
-        $userModel = config('auth.providers.users.model', \App\Models\User::class);
+        Config::set(
+            'auth.providers.users.model',
+            \ItsmeLaravel\Itsme\Tests\Stubs\ItsmeTestUser::class
+        );
 
         // Create users table if it doesn't exist
         if (!\Schema::hasTable('users')) {
             \Schema::create('users', function ($table) {
                 $table->id();
                 $table->string('itsme_id')->nullable();
-                $table->string('email')->nullable();
+                $table->string('email')->nullable()->unique();
                 $table->string('name')->nullable();
                 $table->string('first_name')->nullable();
                 $table->string('last_name')->nullable();
+                $table->string('phone')->nullable();
+                $table->timestamp('email_verified_at')->nullable();
                 $table->timestamps();
             });
         }
@@ -104,8 +111,9 @@ class AuthenticationTest extends TestCase
             'iss' => 'https://idp.itsme.be',
             'sub' => 'user123',
             'aud' => 'test_client_id',
-            'exp' => time() + 3600,
             'iat' => time(),
+            'nbf' => time(),
+            'exp' => time() + 3600,
             'nonce' => 'test_nonce',
         ];
 

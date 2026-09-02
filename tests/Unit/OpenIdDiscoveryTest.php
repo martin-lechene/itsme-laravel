@@ -127,7 +127,7 @@ class OpenIdDiscoveryTest extends TestCase
         ]);
 
         $this->expectException(ItsmeException::class);
-        $this->expectExceptionMessage('Authorization endpoint not found');
+        $this->expectExceptionMessage('OpenID discovery failed: Empty OpenID configuration received');
 
         $this->discovery->getAuthorizationEndpoint();
     }

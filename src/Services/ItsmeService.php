@@ -86,7 +86,7 @@ class ItsmeService
         $state = $request->get('state');
         $sessionState = session()->get('itsme.state');
 
-        if (!$state || $state !== $sessionState) {
+        if (! is_string($state) || ! is_string($sessionState) || ! hash_equals($sessionState, $state)) {
             throw new InvalidStateException(__('itsme::itsme.errors.invalid_state'));
         }
 
@@ -147,7 +147,7 @@ class ItsmeService
                 'status' => $response->status(),
             ]);
 
-            throw new AuthenticationFailedException(__('itsme::itsme.errors.token_exchange_failed') . ': ' . $errorDescription);
+            throw new AuthenticationFailedException(__('itsme::itsme.errors.token_exchange_failed'));
         }
 
         $tokens = $response->json();
@@ -201,10 +201,6 @@ class ItsmeService
         ];
 
         $message = $errorMessages[$error] ?? __('itsme::itsme.errors.unknown_error');
-
-        if ($errorDescription) {
-            $message .= ': ' . $errorDescription;
-        }
 
         Log::error('Itsme authentication error', [
             'error' => $error,

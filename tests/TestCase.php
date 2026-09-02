@@ -2,10 +2,8 @@
 
 namespace ItsmeLaravel\Itsme\Tests;
 
-use Illuminate\Support\Facades\Route;
-use ItsmeLaravel\Itsme\ItsmeServiceProvider;
-use ItsmeLaravel\Itsme\Tests\Models\User;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use ItsmeLaravel\Itsme\ItsmeServiceProvider;
 
 abstract class TestCase extends OrchestraTestCase
 {
@@ -16,10 +14,32 @@ abstract class TestCase extends OrchestraTestCase
     {
         parent::setUp();
 
-        // Load test-specific migrations first (creates the users table),
-        // then the package migration (adds itsme_id column to users).
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        // The package migration appends itsme_id to an existing users table:
+        // create a baseline table first so migrations can run in tests.
+        $this->createUsersTableIfMissing();
+
+        // Load migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+    }
+
+    protected function createUsersTableIfMissing(): void
+    {
+        if (\Schema::hasTable('users')) {
+            return;
+        }
+
+        \Schema::create('users', function ($table) {
+            $table->id();
+            $table->string('email')->nullable();
+            $table->string('name')->nullable();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('phone')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -30,15 +50,6 @@ abstract class TestCase extends OrchestraTestCase
         return [
             ItsmeServiceProvider::class,
         ];
-    }
-
-    /**
-     * Define routes for the test application.
-     */
-    protected function defineRoutes($router): void
-    {
-        // Provide a minimal login route so controller error redirects don't throw.
-        $router->get('/login', fn () => 'login')->name('login');
     }
 
     /**
@@ -53,9 +64,6 @@ abstract class TestCase extends OrchestraTestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
-
-        // Use the test User model so the controller can create/update users.
-        $app['config']->set('auth.providers.users.model', User::class);
 
         // Setup Itsme config
         $app['config']->set('itsme.client_id', 'test_client_id');
