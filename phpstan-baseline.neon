@@ -1,0 +1,175 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property object\:\:\$exists\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Call to an undefined method object\:\:getFillable\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Call to an undefined method object\:\:getGuarded\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Call to an undefined method object\:\:update\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Class App\\Models\\User not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Controllers\\ItsmeController\:\:createOrUpdateUser\(\) has parameter \$userInfo with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Controllers\\ItsmeController\:\:filterFillable\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Controllers\\ItsmeController\:\:filterFillable\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Controllers\\ItsmeController\:\:findUser\(\) has parameter \$userInfo with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Controllers\\ItsmeController\:\:userExists\(\) has parameter \$userInfo with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controllers/ItsmeController.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Events\\ItsmeUserAuthenticated\:\:__construct\(\) has parameter \$user with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Events/ItsmeUserAuthenticated.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Events\\ItsmeUserAuthenticated\:\:__construct\(\) has parameter \$userInfo with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Events/ItsmeUserAuthenticated.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Events\\ItsmeUserCreated\:\:__construct\(\) has parameter \$user with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Events/ItsmeUserCreated.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Events\\ItsmeUserCreated\:\:__construct\(\) has parameter \$userInfo with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Events/ItsmeUserCreated.php
+
+		-
+			message: '#^Class ItsmeLaravel\\Itsme\\Facades\\Itsme has PHPDoc tag @method for method handleCallback\(\) return type with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Facades/Itsme.php
+
+		-
+			message: '#^Cannot access offset ''router'' on Illuminate\\Contracts\\Foundation\\Application\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/ItsmeServiceProvider.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\ItsmeService\:\:exchangeCodeForToken\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/ItsmeService.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\ItsmeService\:\:getUserInfo\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/ItsmeService.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\ItsmeService\:\:handleCallback\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/ItsmeService.php
+
+		-
+			message: '#^Parameter \#1 \$message of class ItsmeLaravel\\Itsme\\Exceptions\\AuthenticationFailedException constructor expects string, array\|string given\.$#'
+			identifier: argument.type
+			count: 5
+			path: src/Services/ItsmeService.php
+
+		-
+			message: '#^Parameter \#1 \$message of class ItsmeLaravel\\Itsme\\Exceptions\\InvalidStateException constructor expects string, array\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Services/ItsmeService.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\OpenIdDiscovery\:\:discover\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/OpenIdDiscovery.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\OpenIdDiscovery\:\:getConfiguration\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/OpenIdDiscovery.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\TokenValidator\:\:convertJwkToPem\(\) has parameter \$jwk with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/TokenValidator.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\TokenValidator\:\:createPemFromModulusAndExponent\(\) has parameter \$rsaPublicKey with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/TokenValidator.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\TokenValidator\:\:findPublicKey\(\) has parameter \$jwks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/TokenValidator.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\TokenValidator\:\:getJwks\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/TokenValidator.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\TokenValidator\:\:validateIdToken\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/TokenValidator.php
+
+		-
+			message: '#^Method ItsmeLaravel\\Itsme\\Services\\TokenValidator\:\:verifySignature\(\) has parameter \$header with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/TokenValidator.php
