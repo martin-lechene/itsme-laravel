@@ -2,17 +2,17 @@
 
 ## 🔒 Support des Versions
 
-Nous fournissons des mises à jour de sécurité pour les versions suivantes :
+Le package est en bêta (aucune version taguée pour l'instant). Les correctifs de sécurité sont appliqués sur la branche `main`, puis sur la dernière version taguée une fois les releases démarrées :
 
 | Version | Supporté          |
 | ------- | ----------------- |
-| 1.x     | :white_check_mark: |
+| `main` (bêta) | :white_check_mark: |
 
 ## 🚨 Signaler une Vulnérabilité
 
 Si vous découvrez une vulnérabilité de sécurité, **NE CRÉEZ PAS D'ISSUE PUBLIQUE**.
 
-Veuillez envoyer un email à : **martin.lechene@example.com**
+Veuillez envoyer un email à : **contact@doganddev.eu**
 
 ### Informations à Inclure
 

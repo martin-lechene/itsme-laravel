@@ -1,6 +1,6 @@
 # itsme® Laravel
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/martin-lechene/itsme-laravel.svg?style=flat-square)](https://packagist.org/packages/martin-lechene/itsme-laravel)
+[![Status: beta](https://img.shields.io/badge/status-beta-orange.svg?style=flat-square)](CHANGELOG.md)
 [![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg?style=flat-square)](https://php.net)
 [![Laravel](https://img.shields.io/badge/Laravel-12%20%7C%2013-red.svg?style=flat-square)](https://laravel.com)
 [![Tests](https://img.shields.io/github/actions/workflow/status/martin-lechene/itsme-laravel/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/martin-lechene/itsme-laravel/actions)
@@ -35,6 +35,8 @@ Package Laravel pour l'authentification via **itsme®** — la solution d'identi
 - [Tests](#-tests)
 - [Guide de mise à jour](#-guide-de-mise-à-jour)
 - [Contribution](#-contribution)
+- [Signaler une vulnérabilité](#-signaler-une-vulnérabilité)
+- [Support](#-support)
 - [Licence](#-licence)
 
 ---
@@ -64,7 +66,7 @@ Package Laravel pour l'authentification via **itsme®** — la solution d'identi
 | Prérequis | Version |
 |---|---|
 | PHP | `^8.2` |
-| Laravel | `^12.0` ou `^13.0` |
+| Laravel | `^12.0` (PHP 8.2+) ou `^13.0` (PHP 8.3+, exigence de Laravel 13) |
 | GuzzleHTTP | `^7.0` |
 | firebase/php-jwt | `^7.0` |
 
@@ -74,8 +76,18 @@ Package Laravel pour l'authentification via **itsme®** — la solution d'identi
 
 ### Étape 1 — Installation via Composer
 
+> **Bêta - pas encore sur Packagist.** Aucune version taguée n'existe pour l'instant. Tant que le package n'est pas publié, installez-le depuis le dépôt GitHub en le déclarant comme dépôt VCS dans le `composer.json` de votre application :
+>
+> ```json
+> {
+>     "repositories": [
+>         { "type": "vcs", "url": "https://github.com/martin-lechene/itsme-laravel" }
+>     ]
+> }
+> ```
+
 ```bash
-composer require martin-lechene/itsme-laravel
+composer require martin-lechene/itsme-laravel:dev-main
 ```
 
 Le service provider et la facade `Itsme` sont enregistrés automatiquement via le package auto-discovery de Laravel.
@@ -134,6 +146,17 @@ ITSME_ENVIRONMENT=sandbox
 # ── Sécurité (recommandé : laisser les valeurs par défaut en production) ──────
 ITSME_USE_PKCE=true
 ITSME_VERIFY_TOKEN=true
+
+# ── Optionnel ─────────────────────────────────────────────────────────────────
+# ITSME_DISCOVERY_URL=
+# ITSME_AUTHORIZATION_ENDPOINT=
+# ITSME_TOKEN_ENDPOINT=
+# ITSME_USERINFO_ENDPOINT=
+# ITSME_ISSUER=
+# ITSME_JWKS_URI=
+# ITSME_CLOCK_TOLERANCE=60
+# ITSME_JWKS_CACHE_TTL=300
+# ITSME_LINK_BY_EMAIL=false
 ```
 
 ### Référence config/itsme.php
@@ -148,6 +171,14 @@ return [
     // Environnement : 'sandbox' ou 'production'
     'environment'   => env('ITSME_ENVIRONMENT', 'sandbox'),
 
+    // Discovery / endpoints (tous optionnels ; résolus selon l'environnement par défaut)
+    'discovery_url'          => env('ITSME_DISCOVERY_URL'),
+    'authorization_endpoint' => env('ITSME_AUTHORIZATION_ENDPOINT'),
+    'token_endpoint'         => env('ITSME_TOKEN_ENDPOINT'),
+    'userinfo_endpoint'      => env('ITSME_USERINFO_ENDPOINT'),
+    'issuer'                 => env('ITSME_ISSUER'),
+    'jwks_uri'               => env('ITSME_JWKS_URI'),
+
     // Scopes OpenID à demander
     'scopes'        => ['openid', 'profile', 'email', 'phone'],
 
@@ -156,8 +187,14 @@ return [
 
     // Vérification de signature JWT (toujours true en production)
     'verify_token_signature'  => env('ITSME_VERIFY_TOKEN', true),
+    'allowed_algorithms'      => ['RS256'],
+    'clock_tolerance'         => (int) env('ITSME_CLOCK_TOLERANCE', 60),  // secondes
+    'jwks_cache_ttl'          => (int) env('ITSME_JWKS_CACHE_TTL', 300),  // secondes
 
-    // Surcharge discovery/issuer par environnement (auto-configuré par défaut)
+    // Rattacher un compte existant par e-mail vérifié si aucun itsme_id ne correspond (désactivé par défaut)
+    'link_by_email'           => (bool) env('ITSME_LINK_BY_EMAIL', false),
+
+    // URL de discovery et issuer par défaut selon l'environnement
     'environments' => [
         'sandbox' => [
             'discovery_url' => 'https://idp.sandbox.itsme.be/.well-known/openid-configuration',
@@ -246,14 +283,16 @@ Route::middleware(['auth', 'itsme.auth'])->group(function () {
 });
 ```
 
-**Protection au niveau du contrôleur :**
+**Protection au niveau du contrôleur** (Laravel 12+, via l'interface `HasMiddleware`) :
 
 ```php
-class DashboardController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+
+class DashboardController extends Controller implements HasMiddleware
 {
-    public function __construct()
+    public static function middleware(): array
     {
-        $this->middleware(['auth', 'itsme.auth']);
+        return ['auth', 'itsme.auth'];
     }
 }
 ```
@@ -499,41 +538,32 @@ composer format -- --dry-run --diff
 
 ### Dans votre propre application
 
-Utilisez `Http::fake()` de Laravel pour mocker les réponses itsme® dans vos tests de fonctionnalités :
+Utilisez `Http::fake()` de Laravel pour simuler le document de discovery itsme® dans vos tests (même approche que `tests/Unit/OpenIdDiscoveryTest.php` du package) :
 
 ```php
 use Illuminate\Support\Facades\Http;
 
 Http::fake([
-    '*/token'    => Http::response([
-        'access_token' => 'fake_access_token',
-        'id_token'     => $this->buildFakeIdToken(),
-        'token_type'   => 'Bearer',
-    ]),
-    '*/userinfo' => Http::response([
-        'sub'         => 'user-sub-123',
-        'email'       => 'user@example.com',
-        'given_name'  => 'Jeanne',
-        'family_name' => 'Dupont',
+    '*/.well-known/openid-configuration' => Http::response([
+        'issuer'                 => 'https://idp.sandbox.itsme.be',
+        'authorization_endpoint' => 'https://idp.sandbox.itsme.be/authorize',
+        'token_endpoint'         => 'https://idp.sandbox.itsme.be/token',
+        'userinfo_endpoint'      => 'https://idp.sandbox.itsme.be/userinfo',
+        'jwks_uri'               => 'https://idp.sandbox.itsme.be/jwks',
     ]),
 ]);
 
-$response = $this->get('/itsme/callback?code=fake_code&state=' . session('itsme.state'));
-$response->assertRedirect('/');
+$this->get(route('itsme.redirect'))
+    ->assertRedirectContains('https://idp.sandbox.itsme.be/authorize');
 ```
+
+Pour tester le callback complet, il faut aussi un ID token signé et une réponse JWKS ; voir `tests/Unit/TokenValidatorTest.php` (qui utilise `phpseclib/phpseclib`).
 
 ---
 
 ## 🔄 Guide de mise à jour
 
-### De 1.0.x vers 1.1.x
-
-1. Exécutez `composer update martin-lechene/itsme-laravel`
-2. **Alias middleware enregistré** : L'alias middleware `itsme.auth` est désormais enregistré automatiquement. Si vous l'avez précédemment enregistré manuellement, supprimez le doublon.
-3. **Clé de traduction ajoutée** : `itsme.errors.itsme_auth_required` a été ajoutée aux deux fichiers `en` et `fr`. Si vous avez publié les fichiers de langue, ajoutez cette clé manuellement :
-   - **EN** : `'itsme_auth_required' => 'This page requires authentication via Itsme.'`
-   - **FR** : `'itsme_auth_required' => 'Cette page nécessite une authentification via Itsme.'`
-4. **`laravel/socialite` supprimé** des dépendances — aucune action nécessaire.
+Aucune version n'a encore été taguée : il n'y a donc rien à mettre à jour. Les changements cassants seront listés dans [CHANGELOG.md](CHANGELOG.md) dès les premières versions (le package suit le [versionnage sémantique](https://semver.org/lang/fr/)).
 
 ---
 
@@ -593,7 +623,19 @@ Les contributions sont les bienvenues ! Veuillez suivre ces étapes :
 5. Vérifiez le style de code : `composer format -- --dry-run --diff`
 6. Ouvrez une Pull Request
 
-Veuillez lire [CONTRIBUTING.md](CONTRIBUTING.md) pour plus de détails.
+Veuillez lire [CONTRIBUTING.md](CONTRIBUTING.md) et notre [Code de conduite](CODE_OF_CONDUCT.md).
+
+---
+
+## 🔐 Signaler une vulnérabilité
+
+N'ouvrez pas d'issue publique. Voir [SECURITY.md](SECURITY.md) ou écrivez à [contact@doganddev.eu](mailto:contact@doganddev.eu).
+
+---
+
+## 💬 Support
+
+Bugs et demandes de fonctionnalités : [issues GitHub](https://github.com/martin-lechene/itsme-laravel/issues). Autres questions : [contact@doganddev.eu](mailto:contact@doganddev.eu).
 
 ---
 

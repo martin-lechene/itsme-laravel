@@ -1,6 +1,6 @@
 {
     "name": "martin-lechene/itsme-laravel",
-    "description": "Laravel package for Itsme authentication using OpenID Connect",
+    "description": "Laravel package for itsme authentication using OpenID Connect (beta, community package)",
     "type": "library",
     "keywords": [
         "laravel",
@@ -15,20 +15,17 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Martin Lech\u00eaane",
-            "email": "martin.lechene@example.com"
+            "name": "Martin Lechêne",
+            "email": "contact@doganddev.eu"
         }
     ],
     "homepage": "https://github.com/martin-lechene/itsme-laravel",
     "support": {
         "issues": "https://github.com/martin-lechene/itsme-laravel/issues",
-        "source": "https://github.com/martin-lechene/itsme-laravel"
-    },
-    "scripts": {
-        "test": "vendor/bin/phpunit",
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
-        "analyse": "vendor/bin/phpstan analyse",
-        "format": "vendor/bin/php-cs-fixer fix"
+        "source": "https://github.com/martin-lechene/itsme-laravel",
+        "docs": "https://github.com/martin-lechene/itsme-laravel#readme",
+        "email": "contact@doganddev.eu",
+        "security": "https://github.com/martin-lechene/itsme-laravel/security/policy"
     },
     "require": {
         "php": "^8.2",
@@ -37,9 +34,12 @@
         "firebase/php-jwt": "^7.0"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "mockery/mockery": "^1.6",
         "orchestra/testbench": "^10.0|^11.0",
-        "phpunit/phpunit": "^12.5.22",
-        "mockery/mockery": "^1.6"
+        "phpseclib/phpseclib": "^3.0",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^11.5.56|^12.5.22"
     },
     "autoload": {
         "psr-4": {
@@ -51,6 +51,12 @@
             "ItsmeLaravel\\Itsme\\Tests\\": "tests/"
         }
     },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
+        "format": "vendor/bin/php-cs-fixer fix"
+    },
     "extra": {
         "laravel": {
             "providers": [
@@ -60,6 +66,10 @@
                 "Itsme": "ItsmeLaravel\\Itsme\\Facades\\Itsme"
             }
         }
+    },
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist"
     },
     "minimum-stability": "stable",
     "prefer-stable": true
