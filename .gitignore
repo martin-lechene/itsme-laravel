@@ -2,25 +2,18 @@
 /node_modules/
 /.idea/
 /.vscode/
-/.phpunit.result.cache
-/.php_cs.cache
+.env
+.env.*
+!.env.example
 composer.lock
+.phpunit.result.cache
+.phpunit.cache/
+.php-cs-fixer.cache
+.php_cs.cache
+/coverage/
+.phpstan.cache/
 .DS_Store
 Thumbs.db
-
-# Laravel specific
-/storage/*.key
-/storage/logs/*
-!/storage/logs/.gitkeep
-/bootstrap/cache/*
-!/bootstrap/cache/.gitkeep
-
-# Testing
-/coverage/
-.phpunit.cache
-
-# IDE
 *.swp
 *.swo
 *~
-
