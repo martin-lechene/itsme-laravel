@@ -123,11 +123,13 @@ class OpenIdDiscoveryTest extends TestCase
     public function test_throws_exception_on_missing_endpoint(): void
     {
         Http::fake([
-            '*/.well-known/openid-configuration' => Http::response([]),
+            '*/.well-known/openid-configuration' => Http::response([
+                'issuer' => 'https://idp.itsme.be',
+            ]),
         ]);
 
         $this->expectException(ItsmeException::class);
-        $this->expectExceptionMessage('OpenID discovery failed: Empty OpenID configuration received');
+        $this->expectExceptionMessage('Authorization endpoint not found in OpenID configuration');
 
         $this->discovery->getAuthorizationEndpoint();
     }
