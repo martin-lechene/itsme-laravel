@@ -66,7 +66,7 @@ Package Laravel pour l'authentification via **itsme®** — la solution d'identi
 | Prérequis | Version |
 |---|---|
 | PHP | `^8.2` |
-| Laravel | `^12.0` ou `^13.0` |
+| Laravel | `^12.0` (PHP 8.2+) ou `^13.0` (PHP 8.3+, exigence de Laravel 13) |
 | GuzzleHTTP | `^7.0` |
 | firebase/php-jwt | `^7.0` |
 

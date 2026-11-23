@@ -66,7 +66,7 @@ A Laravel package for authenticating users via **itsme®** — Belgium's digital
 | Requirement | Version |
 |---|---|
 | PHP | `^8.2` |
-| Laravel | `^12.0` or `^13.0` |
+| Laravel | `^12.0` (PHP 8.2+) or `^13.0` (PHP 8.3+, a Laravel 13 requirement) |
 | GuzzleHTTP | `^7.0` |
 | firebase/php-jwt | `^7.0` |
 
