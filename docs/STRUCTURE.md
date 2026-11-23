@@ -154,10 +154,10 @@ $url = Itsme::getAuthorizationUrl();
 ## 📝 Fichiers de Documentation
 
 - `README.md` : Documentation principale
-- `PLAN_PACKAGE_ITSME.md` : Plan de développement détaillé
-- `DETAILS_TECHNIQUES.md` : Détails techniques et exemples de code
-- `FLUX_AUTHENTIFICATION.md` : Diagramme de flux d'authentification
-- `USAGE_EXAMPLES.md` : Exemples d'utilisation
+- `docs/PLAN_PACKAGE_ITSME.md` : Plan de développement détaillé
+- `docs/DETAILS_TECHNIQUES.md` : Détails techniques et exemples de code
+- `docs/FLUX_AUTHENTIFICATION.md` : Diagramme de flux d'authentification
+- `docs/USAGE_EXAMPLES.md` : Exemples d'utilisation
 - `STRUCTURE.md` : Ce fichier
 
 ## 🔒 Sécurité
