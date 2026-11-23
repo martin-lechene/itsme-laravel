@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Community files: `CODE_OF_CONDUCT.md`, issue and pull request templates, `.github/dependabot.yml` (composer + github-actions), `.gitattributes` with `export-ignore` for development files
+- README: beta / VCS installation instructions, complete configuration reference (all `ITSME_*` variables), support and security sections
+- `composer.json`: `support.docs`, `support.email`, `support.security`, `config.sort-packages`
 - Laravel 13 support (`^13.0`) — fully tested with orchestra/testbench `^11.0`
 - PHP 8.4 support in CI matrix
 - `itsme.auth` middleware alias registered automatically by the service provider
@@ -15,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive test infrastructure: test `users` table migration, test `User` model, `APP_KEY` in `phpunit.xml`, `login` route for feature tests
 
 ### Changed
+- Working notes (`DETAILS_TECHNIQUES`, `FLUX_AUTHENTIFICATION`, `PLAN_PACKAGE_ITSME`, `STRUCTURE`, `USAGE_EXAMPLES`) moved to `docs/`
+- Contact address and copyright holder updated (`contact@doganddev.eu`, Dog and Dev / Martin Lechene)
+- CI: PHPStan job is now blocking (it was masked by `|| true`) using a baseline of the 34 pre-existing level-8 findings (`phpstan-baseline.neon`); the PHP-CS-Fixer job is advisory (`continue-on-error`) because 21 existing files are not yet formatted to `.php-cs-fixer.php`; both tools are declared in `require-dev`
+- README: removed the Packagist badge and the 1.0.x to 1.1.x upgrade guide (no release has been tagged yet); controller-level middleware example now uses `HasMiddleware`
 - **[BREAKING]** `minimum-stability` changed from `dev` to `stable` — ensures only stable releases are resolved
 - `laravel/socialite` removed from `require` — it was never used by the package
 - Composer scripts now use `vendor/bin/` prefixes (`vendor/bin/phpunit`, `vendor/bin/phpstan`, `vendor/bin/php-cs-fixer`)
@@ -27,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README.fr.md: complete rewrite in French, synchronized with English README
 
 ### Fixed
+- CI was red on `main`: `OpenIdDiscoveryTest::test_throws_exception_on_missing_endpoint` expected the "Empty OpenID configuration" message for an empty JSON object; it now uses a configuration without `authorization_endpoint` and expects the endpoint-not-found exception, matching the behavior documented below
+- `phpseclib/phpseclib` added to `require-dev` (used by `TokenValidatorTest` to generate RSA keys; the 3 signature tests errored without it)
 - `OpenIdDiscovery::discover()`: `empty($config)` changed to `$config === null` so an empty config array reaches the correct endpoint-not-found exception
 - Migration `down()`: explicit `dropUnique()` / `dropIndex()` before `dropColumn()` for SQLite compatibility
 - `TokenValidatorTest`: removed unused `$this->discovery` mock (was triggering PHPUnit 12 "no expectations" notice)
