@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Working notes (`DETAILS_TECHNIQUES`, `FLUX_AUTHENTIFICATION`, `PLAN_PACKAGE_ITSME`, `STRUCTURE`, `USAGE_EXAMPLES`) moved to `docs/`
 - Contact address and copyright holder updated (`contact@doganddev.eu`, Dog and Dev / Martin Lechene)
 - CI: PHPStan job is now blocking (it was masked by `|| true`) using a baseline of the 34 pre-existing level-8 findings (`phpstan-baseline.neon`); the PHP-CS-Fixer job is advisory (`continue-on-error`) because 21 existing files are not yet formatted to `.php-cs-fixer.php`; both tools are declared in `require-dev`
+- `phpunit/phpunit` constraint widened to `^11.5.56|^12.5.22` (PHPUnit 12 requires PHP 8.3, so the PHP 8.2 CI jobs could not install it)
 - README: removed the Packagist badge and the 1.0.x to 1.1.x upgrade guide (no release has been tagged yet); controller-level middleware example now uses `HasMiddleware`
 - **[BREAKING]** `minimum-stability` changed from `dev` to `stable` — ensures only stable releases are resolved
 - `laravel/socialite` removed from `require` — it was never used by the package

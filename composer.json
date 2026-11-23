@@ -39,7 +39,7 @@
         "orchestra/testbench": "^10.0|^11.0",
         "phpseclib/phpseclib": "^3.0",
         "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^12.5.22"
+        "phpunit/phpunit": "^11.5.56|^12.5.22"
     },
     "autoload": {
         "psr-4": {
